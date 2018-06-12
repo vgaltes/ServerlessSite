@@ -1,0 +1,29 @@
+{
+  "name": "serverlesssite",
+  "version": "1.0.0",
+  "description": "A site done with serverless",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy:dev": "node_modules/.bin/sls deploy --aws-profile vgaltes-private --stage dev",
+    "remove:dev": "node_modules/.bin/sls remove --aws-profile vgaltes-private --stage dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vgaltes/ServerlessSite.git"
+  },
+  "keywords": [
+    "serverless",
+    "react"
+  ],
+  "author": "Vicenc Garcia",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vgaltes/ServerlessSite/issues"
+  },
+  "homepage": "https://github.com/vgaltes/ServerlessSite#readme",
+  "devDependencies": {
+    "serverless": "^1.27.3",
+    "serverless-pseudo-parameters": "^1.6.0"
+  }
+}
