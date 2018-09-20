@@ -110,6 +110,7 @@
     "plugins": [
       "serverless-pseudo-parameters"
     ],
+    "pluginsData": {},
     "functions": {},
     "resources": {
       "Resources": {
@@ -174,7 +175,7 @@
     }
   },
   "package": {
-    "artifactDirectoryName": "serverless/serverless-site/dev/1528837500880-2018-06-12T21:05:00.880Z",
+    "artifactDirectoryName": "serverless/serverless-site/prod/1537305952969-2018-09-18T21:25:52.969Z",
     "artifact": ""
   }
 }
