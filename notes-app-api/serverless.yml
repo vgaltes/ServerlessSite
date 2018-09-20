@@ -15,6 +15,14 @@ custom:
     includeModules: true
   bucketName: notes-app-uploads-${self:provider.stage}-#{AWS::Region}
   notesTableName: notes-app-${self:provider.stage}
+  # Our stage is based on what is passed in when running serverless
+  # commands. Or fallsback to what we have set in the provider section.
+  stage: ${opt:stage, self:provider.stage}
+  # Set our DynamoDB throughput for prod and all other non-prod stages.
+  tableThroughputs:
+    prod: 5
+    default: 1
+  tableThroughput: ${self:custom.tableThroughputs.${self:custom.stage}, self:custom.tableThroughputs.default}
 
 provider:
   name: aws
@@ -40,8 +48,6 @@ provider:
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:us-east-1:165940758985:table/notes-app-dev" # "arn:aws:dynamodb:us-east-1:*:*" # should limit to our table
       
-
-
 functions:
   create:
     handler: create.main
@@ -63,41 +69,42 @@ functions:
           authorizer: aws_iam
     environment:
       notesTableName: ${self:custom.notesTableName}
+  list:
+    handler: list.main
+    events:
+      - http:
+          path: notes
+          method: get
+          cors: true
+          authorizer: aws_iam
+    environment:
+      notesTableName: ${self:custom.notesTableName}
+  update:
+    handler: update.main
+    events:
+      - http:
+          path: notes/{id}
+          method: put
+          cors: true
+          authorizer: aws_iam
+    environment:
+      notesTableName: ${self:custom.notesTableName}
+  delete:
+    handler: delete.main
+    events:
+      - http:
+          path: notes/{id}
+          method: delete
+          cors: true
+          authorizer: aws_iam
+    environment:
+      notesTableName: ${self:custom.notesTableName}
 
 resources:
-  Resources:
-    S3Bucket:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: ${self:custom.bucketName}
-        CorsConfiguration:
-          CorsRules:
-            - AllowedHeaders: 
-              - "*"
-              AllowedMethods:
-              - GET
-              - PUT
-              - POST
-              - HEAD
-              - DELETE
-              AllowedOrigins: 
-              - "*"
-              MaxAge: 3000
-
-    DynamoDB:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:custom.notesTableName}
-        AttributeDefinitions:
-          - AttributeName: userId
-            AttributeType: S
-          - AttributeName: noteId
-            AttributeType: S
-        KeySchema:
-          - AttributeName: userId
-            KeyType: HASH
-          - AttributeName: noteId
-            KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
+  # S3
+  - ${file(resources/s3-bucket.yml)}
+  # DynamoDB
+  - ${file(resources/dynamoDb-table.yml)}
+  # Cognito
+  - ${file(resources/cognito-user-pool.yml)}
+  - ${file(resources/cognito-identity-pool.yml)}
