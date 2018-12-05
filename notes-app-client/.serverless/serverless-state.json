@@ -1,0 +1,309 @@
+{
+  "service": {
+    "service": "notes-app-client-react",
+    "serviceObject": {
+      "name": "notes-app-client-react"
+    },
+    "provider": {
+      "stage": "dev",
+      "region": "us-east-1",
+      "variableSyntax": "\\${([ ~:a-zA-Z0-9._'\",\\-\\/\\(\\)]+?)}",
+      "name": "aws",
+      "runtime": "nodejs8.10",
+      "versionFunctions": true,
+      "remoteFunctionData": null,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket"
+          },
+          "StaticSite": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "AccessControl": "PublicRead",
+              "BucketName": "notes-app-client-react-dev",
+              "WebsiteConfiguration": {
+                "IndexDocument": "index.html",
+                "ErrorDocument": "index.html"
+              }
+            }
+          },
+          "StaticSiteS3BucketPolicy": {
+            "Type": "AWS::S3::BucketPolicy",
+            "Properties": {
+              "Bucket": {
+                "Ref": "StaticSite"
+              },
+              "PolicyDocument": {
+                "Statement": [
+                  {
+                    "Sid": "PublicReadGetObject",
+                    "Effect": "Allow",
+                    "Principal": "*",
+                    "Action": [
+                      "s3:GetObject"
+                    ],
+                    "Resource": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "StaticSite"
+                          },
+                          "/*"
+                        ]
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "WebAppCloudFrontDistribution": {
+            "Type": "AWS::CloudFront::Distribution",
+            "Properties": {
+              "DistributionConfig": {
+                "Origins": [
+                  {
+                    "DomainName": "notes-app-client-react-dev.s3-website-us-east-1.amazonaws.com",
+                    "Id": "WebApp",
+                    "CustomOriginConfig": {
+                      "HTTPPort": 80,
+                      "HTTPSPort": 443,
+                      "OriginProtocolPolicy": "http-only"
+                    }
+                  }
+                ],
+                "Enabled": "true",
+                "DefaultRootObject": "index.html",
+                "CustomErrorResponses": [
+                  {
+                    "ErrorCode": 404,
+                    "ResponseCode": 200,
+                    "ResponsePagePath": "/index.html"
+                  }
+                ],
+                "DefaultCacheBehavior": {
+                  "AllowedMethods": [
+                    "GET",
+                    "HEAD"
+                  ],
+                  "TargetOriginId": "WebApp",
+                  "ForwardedValues": {
+                    "QueryString": "false",
+                    "Cookies": {
+                      "Forward": "none"
+                    }
+                  },
+                  "ViewerProtocolPolicy": "allow-all"
+                }
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            }
+          },
+          "StaticSiteS3BucketName": {
+            "Value": {
+              "Ref": "StaticSite"
+            }
+          },
+          "StaticSiteS3BucketDomainName": {
+            "Value": {
+              "Fn::GetAtt": [
+                "StaticSite",
+                "DomainName"
+              ]
+            }
+          },
+          "StaticSiteS3BucketWebsiteURL": {
+            "Value": {
+              "Fn::GetAtt": [
+                "StaticSite",
+                "WebsiteURL"
+              ]
+            },
+            "Export": {
+              "Name": "StaticSiteS3BucketWebsiteURL-dev"
+            }
+          },
+          "WebAppCloudFrontDistributionOutput": {
+            "Value": {
+              "Fn::GetAtt": [
+                "WebAppCloudFrontDistribution",
+                "DomainName"
+              ]
+            }
+          }
+        }
+      },
+      "coreCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket"
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            }
+          }
+        }
+      }
+    },
+    "custom": {
+      "bucketName": "notes-app-client-react-dev",
+      "siteName": "pufouniversity.com",
+      "s3Sync": [
+        {
+          "bucketName": "notes-app-client-react-dev",
+          "localDir": "build"
+        }
+      ],
+      "hostedZoneName": "pufouniversity.com",
+      "aliasHostedZoneId": "Z36H3EOT7VE7HO",
+      "aliasDNSName": "s3.amazonaws.com/notes-app-client-react-dev"
+    },
+    "plugins": [
+      "serverless-s3-sync"
+    ],
+    "pluginsData": {},
+    "functions": {},
+    "resources": {
+      "Resources": {
+        "StaticSite": {
+          "Type": "AWS::S3::Bucket",
+          "Properties": {
+            "AccessControl": "PublicRead",
+            "BucketName": "notes-app-client-react-dev",
+            "WebsiteConfiguration": {
+              "IndexDocument": "index.html",
+              "ErrorDocument": "index.html"
+            }
+          }
+        },
+        "StaticSiteS3BucketPolicy": {
+          "Type": "AWS::S3::BucketPolicy",
+          "Properties": {
+            "Bucket": {
+              "Ref": "StaticSite"
+            },
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Sid": "PublicReadGetObject",
+                  "Effect": "Allow",
+                  "Principal": "*",
+                  "Action": [
+                    "s3:GetObject"
+                  ],
+                  "Resource": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:aws:s3:::",
+                        {
+                          "Ref": "StaticSite"
+                        },
+                        "/*"
+                      ]
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "WebAppCloudFrontDistribution": {
+          "Type": "AWS::CloudFront::Distribution",
+          "Properties": {
+            "DistributionConfig": {
+              "Origins": [
+                {
+                  "DomainName": "notes-app-client-react-dev.s3-website-us-east-1.amazonaws.com",
+                  "Id": "WebApp",
+                  "CustomOriginConfig": {
+                    "HTTPPort": 80,
+                    "HTTPSPort": 443,
+                    "OriginProtocolPolicy": "http-only"
+                  }
+                }
+              ],
+              "Enabled": "true",
+              "DefaultRootObject": "index.html",
+              "CustomErrorResponses": [
+                {
+                  "ErrorCode": 404,
+                  "ResponseCode": 200,
+                  "ResponsePagePath": "/index.html"
+                }
+              ],
+              "DefaultCacheBehavior": {
+                "AllowedMethods": [
+                  "GET",
+                  "HEAD"
+                ],
+                "TargetOriginId": "WebApp",
+                "ForwardedValues": {
+                  "QueryString": "false",
+                  "Cookies": {
+                    "Forward": "none"
+                  }
+                },
+                "ViewerProtocolPolicy": "allow-all"
+              }
+            }
+          }
+        }
+      },
+      "Outputs": {
+        "StaticSiteS3BucketName": {
+          "Value": {
+            "Ref": "StaticSite"
+          }
+        },
+        "StaticSiteS3BucketDomainName": {
+          "Value": {
+            "Fn::GetAtt": [
+              "StaticSite",
+              "DomainName"
+            ]
+          }
+        },
+        "StaticSiteS3BucketWebsiteURL": {
+          "Value": {
+            "Fn::GetAtt": [
+              "StaticSite",
+              "WebsiteURL"
+            ]
+          },
+          "Export": {
+            "Name": "StaticSiteS3BucketWebsiteURL-dev"
+          }
+        },
+        "WebAppCloudFrontDistributionOutput": {
+          "Value": {
+            "Fn::GetAtt": [
+              "WebAppCloudFrontDistribution",
+              "DomainName"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "package": {
+    "artifactDirectoryName": "serverless/notes-app-client-react/dev/1539348091261-2018-10-12T12:41:31.261Z",
+    "artifact": ""
+  }
+}

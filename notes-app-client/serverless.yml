@@ -1,0 +1,144 @@
+service: notes-app-client-react
+plugins:
+  - serverless-s3-sync
+custom:
+  bucketName: ${self:service}-${self:provider.stage}
+  siteName: pufouniversity.com
+  s3Sync:
+    - bucketName: ${self:custom.bucketName}
+      localDir: build
+  hostedZoneName: pufouniversity.com
+  aliasHostedZoneId: Z36H3EOT7VE7HO    # us-east-1
+  aliasDNSName: s3.amazonaws.com/${self:service}-${self:provider.stage}
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: dev
+  region: us-east-1
+
+resources:
+  Resources:
+    ## Specifying the S3 Bucket
+    StaticSite:
+      Type: AWS::S3::Bucket
+      Properties:
+        AccessControl: PublicRead
+        BucketName: ${self:custom.bucketName}
+        WebsiteConfiguration:
+          IndexDocument: index.html
+          ErrorDocument: index.html
+
+    StaticSiteS3BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket:
+          Ref: StaticSite
+        PolicyDocument:
+          Statement:
+            - Sid: PublicReadGetObject
+              Effect: Allow
+              Principal: "*"
+              Action:
+              - s3:GetObject
+              Resource:
+                Fn::Join: [
+                  "", [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "StaticSite"
+                    },
+                    "/*"
+                  ]
+                ]
+
+    ## Specifying the CloudFront Distribution to server your Web Application
+    WebAppCloudFrontDistribution:
+      Type: AWS::CloudFront::Distribution
+      Properties:
+        DistributionConfig:
+          Origins:
+            # - DomainName: ${self:custom.bucketName}.s3.amazonaws.com
+            - DomainName: ${self:service}-${self:provider.stage}.s3-website-${self:provider.region}.amazonaws.com
+                # Fn::ImportValue: 'StaticSiteS3BucketWebsiteURL-${self:provider.stage}'
+              ## An identifier for the origin which must be unique within the distribution
+              Id: WebApp
+              CustomOriginConfig:
+                HTTPPort: 80
+                HTTPSPort: 443
+                OriginProtocolPolicy: http-only
+              ## In case you want to restrict the bucket access use S3OriginConfig and remove CustomOriginConfig
+              # S3OriginConfig:
+              #   OriginAccessIdentity: origin-access-identity/cloudfront/E127EXAMPLE51Z
+          Enabled: 'true'
+          ## Uncomment the following section in case you are using a custom domain
+          # Aliases:
+          # - mysite.example.com
+          DefaultRootObject: index.html
+          ## Since the Single Page App is taking care of the routing we need to make sure ever path is served with index.html
+          ## The only exception are files that actually exist e.h. app.js, reset.css
+          CustomErrorResponses:
+            - ErrorCode: 404
+              ResponseCode: 200
+              ResponsePagePath: /index.html
+          DefaultCacheBehavior:
+            AllowedMethods:
+              # - DELETE
+              - GET
+              - HEAD
+              # - OPTIONS
+              # - PATCH
+              # - POST
+              # - PUT
+            ## The origin id defined above
+            TargetOriginId: WebApp
+            ## Defining if and how the QueryString and Cookies are forwarded to the origin which in this case is S3
+            ForwardedValues:
+              QueryString: 'false'
+              Cookies:
+                Forward: none
+            ## The protocol that users can use to access the files in the origin. To allow HTTP use `allow-all`
+            ViewerProtocolPolicy: allow-all
+          ## The certificate to use when viewers use HTTPS to request objects.
+          # ViewerCertificate:
+          #   CloudFrontDefaultCertificate: 'true'
+          ## Uncomment the following section in case you want to enable logging for CloudFront requests
+          # Logging:
+          #   IncludeCookies: 'false'
+          #   Bucket: mylogs.s3.amazonaws.com
+          #   Prefix: myprefix
+          Aliases:
+            - ${self:custom.siteName}
+
+    # DnsRecord:
+    #   Type: "AWS::Route53::RecordSet"
+    #   Properties:
+    #     AliasTarget:
+    #       DNSName: ${self:custom.bucketName}
+    #       HostedZoneId: ${self:custom.aliasHostedZoneId}
+    #     HostedZoneName: ${self:custom.siteName}.
+    #     Name:
+    #       Ref: StaticSite
+    #     Type: 'A'
+
+  Outputs:
+    StaticSiteS3BucketName:
+      Value:
+        'Ref': StaticSite
+    StaticSiteS3BucketDomainName:
+      Value:
+        Fn::GetAtt:
+          - StaticSite
+          - DomainName
+    StaticSiteS3BucketWebsiteURL:
+      Value:
+        Fn::GetAtt:
+          - StaticSite
+          - WebsiteURL
+      Export:
+        Name: StaticSiteS3BucketWebsiteURL-${self:provider.stage}
+    WebAppCloudFrontDistributionOutput:
+      Value:
+        Fn::GetAtt:
+          - WebAppCloudFrontDistribution
+          - DomainName

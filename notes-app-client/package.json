@@ -1,0 +1,26 @@
+{
+  "name": "notes-app-client",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "aws-amplify": "^1.1.1",
+    "react": "^16.5.2",
+    "react-bootstrap": "^0.32.4",
+    "react-dom": "^16.5.2",
+    "react-router-bootstrap": "^0.24.4",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "1.1.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "deploy:dev": "node_modules/.bin/sls deploy --aws-profile vgaltes-private --stage dev",
+    "remove:dev": "node_modules/.bin/sls remove --aws-profile vgaltes-private --stage dev"
+  },
+  "devDependencies": {
+    "serverless": "^1.32.0",
+    "serverless-s3-sync": "^1.6.1"
+  }
+}
