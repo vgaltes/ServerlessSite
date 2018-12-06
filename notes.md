@@ -34,3 +34,9 @@ AWS_PROFILE=vgaltes-private sls invoke local --function update --path mocks/upda
 AWS_PROFILE=vgaltes-private sls invoke local --function delete --path mocks/delete-event.json
 
 npx aws-api-gateway-cli-test --username admin@example.com --password P2ssw0rd01! --user-pool-id us-east-1_2HADSF62M --app-client-id 44onb9alfj16qv3btc74kj7uph --cognito-region us-east-1 --identity-pool-id us-east-1:ff922804-7e90-458b-91e1-12fc0a58d649 --invoke-url https://axn85vctr2.execute-api.us-east-1.amazonaws.com/dev --api-gateway-region us-east-1 --path-template /notes --method POST --body "{\"content\":\"hello world\",\"attachment\":\"hello.jpg\"}"
+
+
+======== USEFUL COMMANDS ====== 
+AWS_PROFILE=vgaltes-private node seedMasters.js masters-prod
+SKIP_PREFLIGHT_CHECK=true npm start
+SLSUSER=vgaltes SLS_DEBUG=* npm run deploy -- --aws-profile=vgaltes-private --stage=devvgaltes
