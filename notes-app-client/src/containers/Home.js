@@ -1,7 +1,10 @@
 import React, { Component } from "react";
 import { PageHeader, ListGroup, ListGroupItem } from "react-bootstrap";
 import "./Home.css";
-import { API } from "aws-amplify";
+// import { API } from "aws-amplify";
+import config from "../config";
+
+const http = require("superagent-promise")(require("superagent"), Promise);
 
 export default class Home extends Component {
   constructor(props) {
@@ -9,18 +12,18 @@ export default class Home extends Component {
 
     this.state = {
       isLoading: true,
-      notes: []
+      masters: []
     };
   }
 
   async componentDidMount() {
-    if (!this.props.isAuthenticated) {
-      return;
-    }
+    // if (!this.props.isAuthenticated) {
+    //   return;
+    // }
 
     try {
-      const notes = await this.notes();
-      this.setState({ notes });
+      const masters = await this.masters();
+      this.setState({ masters });
     } catch (e) {
       alert(e);
     }
@@ -28,36 +31,37 @@ export default class Home extends Component {
     this.setState({ isLoading: false });
   }
 
-  notes() {
-    return API.get("notes", "/notes");
+  async masters() {
+    //return API.get("masters", "/masters");
+    const url = `${config.apiGateway.URL}/masters`;
+    try {
+      const masters = await http("GET", url);
+      return masters.body;
+    } catch (e) {
+      alert(e);
+      return [];
+    }
   }
 
-  renderNotesList(notes) {
-    return [{}].concat(notes).map((note, i) =>
-      i !== 0 ? (
+  renderMastersList(masters) {
+    return masters.map((master, i) =>
+      this.props.isAuthenticated ? (
         <ListGroupItem
-          key={note.noteId}
-          href={`/notes/${note.noteId}`}
-          onClick={this.handleNoteClick}
-          header={note.content.trim().split("\n")[0]}
-        >
-          {"Created: " + new Date(note.createdAt).toLocaleString()}
-        </ListGroupItem>
+          key={master.id}
+          href={`/master/${master.id}`}
+          onClick={this.handleMasterClick}
+          header={master.name.trim().split("\n")[0]}
+        />
       ) : (
         <ListGroupItem
-          key="new"
-          href="/notes/new"
-          onClick={this.handleNoteClick}
-        >
-          <h4>
-            <b>{"\uFF0B"}</b> Create a new note
-          </h4>
-        </ListGroupItem>
+          key={master.id}
+          header={master.name.trim().split("\n")[0]}
+        />
       )
     );
   }
 
-  handleNoteClick = event => {
+  handleMasterClick = event => {
     event.preventDefault();
     this.props.history.push(event.currentTarget.getAttribute("href"));
   };
@@ -71,12 +75,12 @@ export default class Home extends Component {
     );
   }
 
-  renderNotes() {
+  renderMasters() {
     return (
       <div className="notes">
-        <PageHeader>Your Notes</PageHeader>
+        <PageHeader>Nuestros masters</PageHeader>
         <ListGroup>
-          {!this.state.isLoading && this.renderNotesList(this.state.notes)}
+          {!this.state.isLoading && this.renderMastersList(this.state.masters)}
         </ListGroup>
       </div>
     );
@@ -88,6 +92,6 @@ export default class Home extends Component {
     //     {this.props.isAuthenticated ? this.renderNotes() : this.renderLander()}
     //   </div>
     // );
-    return <div className="Home">{this.renderLander()}</div>;
+    return <div className="Home">{this.renderMasters()}</div>;
   }
 }

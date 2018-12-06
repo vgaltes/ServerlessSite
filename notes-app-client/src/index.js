@@ -31,8 +31,17 @@ Amplify.configure({
         // endpoint: config.apiGateway.URL,
         // region: config.apiGateway.REGION
         name: "masters",
-        endpoint: "https://6rf3v00hv9.execute-api.eu-west-1.amazonaws.com/dev",
-        region: "eu-west-1"
+        endpoint:
+          "https://vbzwo2ncr4.execute-api.eu-west-1.amazonaws.com/devvgaltes",
+        region: "eu-west-1",
+        custom_header: async () => {
+          // return { Authorization: 'token' }
+          // Alternatively, with Cognito User Pools use this:
+          return {
+            Authorization: (await Amplify.Auth.currentSession()).idToken
+              .jwtToken
+          };
+        }
       }
     ]
   }
