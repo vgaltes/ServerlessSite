@@ -32,7 +32,8 @@ Amplify.configure({
         // region: config.apiGateway.REGION
         name: "masters",
         endpoint:
-          "https://vbzwo2ncr4.execute-api.eu-west-1.amazonaws.com/devvgaltes",
+          // "https://vbzwo2ncr4.execute-api.eu-west-1.amazonaws.com/devvgaltes",
+          "https://7p2rv2y7ri.execute-api.eu-west-1.amazonaws.com/prod",
         region: "eu-west-1",
         custom_header: async () => {
           // return { Authorization: 'token' }
