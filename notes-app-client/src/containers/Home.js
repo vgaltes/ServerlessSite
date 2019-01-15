@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { PageHeader, ListGroup, ListGroupItem } from "react-bootstrap";
 import "./Home.css";
-// import { API } from "aws-amplify";
 import config from "../config";
 
 const http = require("superagent-promise")(require("superagent"), Promise);
@@ -17,10 +16,6 @@ export default class Home extends Component {
   }
 
   async componentDidMount() {
-    // if (!this.props.isAuthenticated) {
-    //   return;
-    // }
-
     try {
       const masters = await this.masters();
       this.setState({ masters });
@@ -32,7 +27,6 @@ export default class Home extends Component {
   }
 
   async masters() {
-    //return API.get("masters", "/masters");
     const url = `${config.apiGateway.URL}/masters`;
     try {
       const masters = await http("GET", url);
@@ -53,11 +47,11 @@ export default class Home extends Component {
           header={master.name.trim().split("\n")[0]}
         />
       ) : (
-        <ListGroupItem
-          key={master.id}
-          header={master.name.trim().split("\n")[0]}
-        />
-      )
+          <ListGroupItem
+            key={master.id}
+            header={master.name.trim().split("\n")[0]}
+          />
+        )
     );
   }
 
@@ -65,15 +59,6 @@ export default class Home extends Component {
     event.preventDefault();
     this.props.history.push(event.currentTarget.getAttribute("href"));
   };
-
-  renderLander() {
-    return (
-      <div className="lander">
-        <h1>PUFO UNIVERSITY</h1>
-        <p>La universidad de los políticos</p>
-      </div>
-    );
-  }
 
   renderMasters() {
     return (
@@ -87,11 +72,6 @@ export default class Home extends Component {
   }
 
   render() {
-    // return (
-    //   <div className="Home">
-    //     {this.props.isAuthenticated ? this.renderNotes() : this.renderLander()}
-    //   </div>
-    // );
     return <div className="Home">{this.renderMasters()}</div>;
   }
 }

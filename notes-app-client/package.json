@@ -18,11 +18,19 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
+    "run": "react-scripts build && serve -s build",
     "deploy:dev": "node_modules/.bin/sls deploy --aws-profile vgaltes-private --stage dev",
     "remove:dev": "node_modules/.bin/sls remove --aws-profile vgaltes-private --stage dev"
   },
   "devDependencies": {
+    "serve": "^10.1.1",
     "serverless": "^1.32.0",
     "serverless-s3-sync": "^1.6.1"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

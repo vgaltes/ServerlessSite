@@ -1,10 +1,7 @@
 import React, { Component } from "react";
 import { API, Storage } from "aws-amplify";
-import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import LoaderButton from "../components/LoaderButton";
-import config from "../config";
 import "./Master.css";
-import { s3Upload } from "../libs/awsLib";
 
 export default class Master extends Component {
   constructor(props) {
@@ -32,10 +29,10 @@ export default class Master extends Component {
     return API.get("masters", `/master/${this.props.match.params.id}`);
   }
 
-  saveNote(note) {
-    // return API.put("notes", `/notes/${this.props.match.params.id}`, {
-    //   body: note
-    // });
+  enrolToMaster(masterId) {
+    return API.post("masters", `/master`, {
+      body: { masterId: masterId }
+    });
   }
 
   handleSubmit = async event => {
@@ -44,10 +41,8 @@ export default class Master extends Component {
     this.setState({ isLoading: true });
 
     try {
-      //   await this.saveNote({
-      //     content: this.state.content,
-      //     attachment: attachment || this.state.note.attachment
-      //   });
+      await this.enrolToMaster(this.state.master.id);
+
       this.props.history.push("/");
     } catch (e) {
       alert(e);
@@ -60,41 +55,26 @@ export default class Master extends Component {
       <div className="Notes">
         {this.state.master && (
           <div>
-            <h2>{this.state.master.name}</h2>
-            <p>{this.state.master.description}</p>
+            <div>
+              <h2>{this.state.master.name}</h2>
+              <p>{this.state.master.description}</p>
+            </div>
+            <form onSubmit={this.handleSubmit}>
+              <LoaderButton
+                block
+                bsStyle="primary"
+                bsSize="large"
+                type="submit"
+                isLoading={this.state.isLoading}
+                text="Enrol"
+                loadingText="Enrolling..."
+              />
+            </form>
           </div>
-        )
-        // <form onSubmit={this.handleSubmit}>
-        //     <FormGroup controlId="content">
-        //         <FormControl
-        //             onChange={this.handleChange}
-        //             value={this.state.content}
-        //             componentClass="textarea"
-        //         />
-        //     </FormGroup>
 
-        // </form>
+        )
         }
       </div>
     );
-
-    // return {(
-    //   <div className="Notes">
-    //     <h2>{this.state.master.name}</h2>
-    //     <p>{this.state.master.description}</p>
-    //     {/* {this.state.note && ( (
-    //       <form onSubmit={this.handleSubmit}>
-    //         <FormGroup controlId="content">
-    //           <FormControl
-    //             onChange={this.handleChange}
-    //             value={this.state.content}
-    //             componentClass="textarea"
-    //           />
-    //         </FormGroup>
-
-    //       </form>
-    //     )} */}
-    //   </div>
-    // );
   }
 }
