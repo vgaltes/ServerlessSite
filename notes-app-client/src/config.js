@@ -1,12 +1,12 @@
 export default {
   apiGateway: {
-    REGION: REGION_PLACEHOLDER,
-    URL: API_URL_PLACEHOLDER
+    REGION: process.env.REGION,
+    URL: process.env.API_URL
   },
   cognito: {
-    REGION: REGION_PLACEHOLDER,
-    USER_POOL_ID: USER_POOL_ID_PLACEHOLDER,
-    APP_CLIENT_ID: APP_CLIENT_ID_PLACEHOLDER,
-    IDENTITY_POOL_ID: IDENTITY_POOL_ID_PLACEHOLDER
+    REGION: process.env.REGION,
+    USER_POOL_ID: process.env.USER_POOL_ID,
+    APP_CLIENT_ID: process.env.APP_CLIENT_ID,
+    IDENTITY_POOL_ID: process.env.IDENTITY_POOL_ID
   }
 };
