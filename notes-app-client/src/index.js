@@ -7,8 +7,6 @@ import "./index.css";
 import Amplify from "aws-amplify";
 import config from "./config";
 
-console.log(process.env.REGION);
-
 Amplify.configure({
   Auth: {
     mandatorySignIn: true,
