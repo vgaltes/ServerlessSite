@@ -13,7 +13,6 @@
 [context.sit]
   command = "./buildClient.sh"
   publish = "notes-app-client/build"
-  base = "sit"
 
 [context.sit.environment]
   REGION = "eu-west-1"
