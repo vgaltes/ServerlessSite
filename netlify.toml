@@ -10,10 +10,6 @@
   APP_CLIENT_ID = "7hh25rpm0622pgfgpbd8oh7ocd"
   IDENTITY_POOL_ID = "eu-west-1:5947c4bf-b8f2-4b7e-98e0-b47a2b888c6e"
 
-[context.sit]
-  command = "./buildClient.sh"
-  publish = "notes-app-client/build"
-
 [context.sit.environment]
   REGION = "eu-west-1"
   API_URL = "https://ci08thnyaj.execute-api.eu-west-1.amazonaws.com/sit/api"
