@@ -1,0 +1,16 @@
+# Global settings applied to the whole site.
+[build]
+  command = "./buildClient.sh"
+  publish = "notes-app-client/build"
+
+[context.production.environment]
+  API_URL = "https://ci08thnyaj.execute-api.eu-west-1.amazonaws.com/sit/api"
+  USER_POOL_ID = "eu-west-1_WYhGWTNxJ"
+  APP_CLIENT_ID = "7hh25rpm0622pgfgpbd8oh7ocd"
+  IDENTITY_POOL_ID = "eu-west-1:5947c4bf-b8f2-4b7e-98e0-b47a2b888c6e"
+
+[context.sit.environment]
+  API_URL = "https://ci08thnyaj.execute-api.eu-west-1.amazonaws.com/sit/api"
+  USER_POOL_ID = "eu-west-1_WYhGWTNxJ"
+  APP_CLIENT_ID = "7hh25rpm0622pgfgpbd8oh7ocd"
+  IDENTITY_POOL_ID = "eu-west-1:5947c4bf-b8f2-4b7e-98e0-b47a2b888c6e"
