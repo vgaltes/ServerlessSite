@@ -10,4 +10,3 @@ export default {
     IDENTITY_POOL_ID: process.env.IDENTITY_POOL_ID
   }
 };
-
